@@ -24,7 +24,9 @@ const commands = {
     log(categories);
   },
   async notes() {
-    const notes = await prisma.note.findMany();
+    const notes = await prisma.note.findMany({
+      include: { category: true },
+    });
     log(notes);
   },
   async note(id) {
@@ -38,13 +40,20 @@ const commands = {
       log("not found note");
     } else log(note);
   },
-  create(
-    note = {
-      titel: "",
-      content: "",
-      categoryId: null,
+  async create(title = "") {
+    if (!title.trim()) {
+      log("title mast be not empty");
+      return;
     }
-  ) {
+    const categories = await prisma.category.findMany();
+    const ids = categories.map((c) => c.id);
+    const randomCategoryId = ids[Math.floor(Math.random() * ids.length)];
+    const note = await prisma.note.create({
+      data: {
+        title,
+        categoryId: randomCategoryId,
+      },
+    });
     log(note);
   },
   hello() {
