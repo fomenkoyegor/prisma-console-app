@@ -6,15 +6,20 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 model Category {
   id        Int       @id @default(autoincrement())
   name      String
   notes     Note[]
+  @@map("categories")
 }
 
 model Note {
@@ -24,6 +29,9 @@ model Note {
  archived   Boolean   @default(false)
  categoryId Int
  category   Category  @relation(fields: [categoryId], references: [id])
- 
+ @@map("notes")
 }
+
+
+
 
